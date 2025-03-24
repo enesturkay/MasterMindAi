@@ -1,5 +1,4 @@
 import time
-
 import customtkinter
 import mysql.connector
 from PIL import Image
