@@ -1,10 +1,10 @@
 import mysql.connector
 import customtkinter
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="1234",  # Şifre belirlediysen buraya ekle
-    database = "app"
+    host="",
+    user="",
+    password="",
+    database = ""
 )
 mycursor = db.cursor()
 class App(customtkinter.CTk):
@@ -44,10 +44,10 @@ class App(customtkinter.CTk):
         self.reset_timer()
 
     def make_transparent(self):
-        self.attributes("-alpha", 0.5)  # %50 şeffaf yap
+        self.attributes("-alpha", 0.5)
 
     def reset_timer(self):
-        self.after_cancel(self.timer)  # Önceki zamanlayıcıyı iptal et
+        self.after_cancel(self.timer)
         self.timer = self.after(5000, self.make_transparent)
     def AddDataBase(self):
         sqlQuery = "INSERT INTO forapptable (English,Turkish ) VALUES (%s, %s)"
@@ -59,7 +59,7 @@ class App(customtkinter.CTk):
 
     def on_focus_in_Turkish(self,event):
         if self.TurkishEntryCheck.get() == "Türkçe":
-            self.TurkishEntryCheck.set("")  # Placeholder'ı temizle
+            self.TurkishEntryCheck.set("")
 
     def on_focus_out_Turkish(self,event):
         if self.TurkishEntryCheck.get() == "":
@@ -67,7 +67,7 @@ class App(customtkinter.CTk):
         self.focus()
     def on_focus_in_English(self,event):
         if self.EnglishEntryCheck.get() == "İngilizce":
-            self.EnglishEntryCheck.set("")  # Placeholder'ı temizle
+            self.EnglishEntryCheck.set("")
 
     def on_focus_out_English(self,event):
         if self.EnglishEntryCheck.get() == "":

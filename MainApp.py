@@ -10,10 +10,10 @@ import threading
 
 
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="1234",  # Şifre belirlediysen buraya ekle
-    database = "app"
+    host="",
+    user="",
+    password="",
+    database = ""
 )
 mycursor = db.cursor()
 class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
@@ -142,11 +142,11 @@ class TopLevelFrameSettingsRecent(customtkinter.CTkFrame):
 
         queryToAdd = "UPDATE forapptable SET AdAi = %s WHERE English = %s"
 
-        # Eğer AdAi değeri 0 ise 1 yap, değilse 0 yap
+
         new_value = 1 if resultOne[0] == 0 else 0
         mycursor.execute(queryToAdd, (new_value, forAdd))
 
-        # Commit işlemini en son yap
+
         db.commit()
 
     def Search(self,event):
@@ -317,7 +317,7 @@ class CreateNewCart(customtkinter.CTkFrame):
 
     def on_focus_in_Turkish(self,event):
         if self.TurkishEntryCheck.get() == "Türkçe":
-            self.TurkishEntryCheck.set("")  # Placeholder'ı temizle
+            self.TurkishEntryCheck.set("")
 
     def on_focus_out_Turkish(self,event):
         if self.TurkishEntryCheck.get() == "":
@@ -325,7 +325,7 @@ class CreateNewCart(customtkinter.CTkFrame):
         self.focus()
     def on_focus_in_English(self,event):
         if self.EnglishEntryCheck.get() == "İngilizce":
-            self.EnglishEntryCheck.set("")  # Placeholder'ı temizle
+            self.EnglishEntryCheck.set("")
 
     def on_focus_out_English(self,event):
         if self.EnglishEntryCheck.get() == "":
@@ -349,14 +349,14 @@ class RecentWord(customtkinter.CTkFrame):
         labelONe.grid(row=1, column=0)
 
         self.labelTwoCheck = customtkinter.StringVar()
-        labelTwo = customtkinter.CTkLabel(self, text="• Another Label", font=("Cascadia Mono Semibold", 13),textvariable = self.labelTwoCheck)  # Changed text
+        labelTwo = customtkinter.CTkLabel(self, text="• Another Label", font=("Cascadia Mono Semibold", 13),textvariable = self.labelTwoCheck)
         labelTwo.grid(row=2, column=0)
         self.toplevel_window = None
         self.labelThreeCheck = customtkinter.StringVar()
-        labelThree = customtkinter.CTkLabel(self, text="• Yet Another Label", font=("Cascadia Mono Semibold", 13),textvariable=self.labelThreeCheck)  # Changed text
+        labelThree = customtkinter.CTkLabel(self, text="• Yet Another Label", font=("Cascadia Mono Semibold", 13),textvariable=self.labelThreeCheck)
         labelThree.grid(row=3, column=0)
         self.labelFourCheck = customtkinter.StringVar()
-        labelFour = customtkinter.CTkLabel(self, text="• And One More", font=("Cascadia Mono Semibold", 13),textvariable = self.labelFourCheck)  # Changed text
+        labelFour = customtkinter.CTkLabel(self, text="• And One More", font=("Cascadia Mono Semibold", 13),textvariable = self.labelFourCheck)
         labelFour.grid(row=4, column=0)
         self.MoreButton = customtkinter.CTkButton(self, text="Daha Fazla", corner_radius=34, fg_color="#582233",hover_color="#3F1825", width=150, font=("Cascadia Mono Semibold", 13),hover=True, cursor="hand2",command=lambda: self.open_toplevel())
         self.MoreButton.grid(row=5, column=0)
@@ -365,9 +365,9 @@ class RecentWord(customtkinter.CTkFrame):
 
     def open_toplevel(self):
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = ToplevelRemainWord(self)  # create window if its None or destroyed
+            self.toplevel_window = ToplevelRemainWord(self)
         else:
-            self.toplevel_window.focus()  # if window exists focus it
+            self.toplevel_window.focus()
     def RecentWordCheck(self):
         sqlQuest = "select English from forapptable order by id DESC LIMIT 5"
         mycursor.execute(sqlQuest)
@@ -483,7 +483,6 @@ class App(customtkinter.CTk):
         padx = int(width * 0.05)
         pady = int(height * 0.05)
 
-        # Yeni padx, pady değerlerini uygula
         self.startAi.grid_configure(padx=padx, pady=pady)
         self.startPractice.grid_configure(padx=padx, pady=pady)
         self.recentWord.grid_configure(padx=padx, pady=pady)
