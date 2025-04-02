@@ -9,10 +9,7 @@ import threading
 
 
 db = mysql.connector.connect(
-    host="",
-    user="",
-    password="",
-    database = ""
+
 )
 mycursor = db.cursor()
 class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
@@ -308,6 +305,8 @@ class CreateNewCart(customtkinter.CTkFrame):
     def AddDataBase(self):
         sqlQuery = "INSERT INTO forapptable (English,Turkish ) VALUES (%s, %s)"
         val = (self.EnglishEntryCheck.get().lower(),self.TurkishEntryCheck.get().lower())
+        if val[0] == "" or val[1] =="" or val[0] == "ingilizce" or val[1] == "türkçe":
+            return
         mycursor.execute(sqlQuery,val)
         db.commit()
         self.master.RecentToCreate()
