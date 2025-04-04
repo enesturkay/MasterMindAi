@@ -7,7 +7,6 @@ import threading
 
 
 
-
 db = mysql.connector.connect(
 
 )
@@ -305,7 +304,14 @@ class CreateNewCart(customtkinter.CTkFrame):
     def AddDataBase(self):
         sqlQuery = "INSERT INTO forapptable (English,Turkish ) VALUES (%s, %s)"
         val = (self.EnglishEntryCheck.get().lower(),self.TurkishEntryCheck.get().lower())
+        mycursor.execute("SELECT 1 FROM forapptable  WHERE English = %s", (val[0],))
+        sonuc = mycursor.fetchone()
         if val[0] == "" or val[1] =="" or val[0] == "ingilizce" or val[1] == "türkçe":
+            return
+        if sonuc:
+            self.EnglishEntry.configure(text_color="Red")
+            self.TurkishEntryCheck.set(value="Kelime Kayıtlı")
+            self.after(2000, lambda: self.EnglishEntry.configure(text_color="white"))
             return
         mycursor.execute(sqlQuery,val)
         db.commit()
