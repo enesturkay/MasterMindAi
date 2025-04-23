@@ -4,13 +4,79 @@ import mysql.connector
 from PIL import Image
 import ollama
 import threading
+from datetime import datetime
 
 
 
-db = mysql.connector.connect(
 
-)
 mycursor = db.cursor()
+class TLPracticeWord(customtkinter.CTkToplevel):
+    def __init__(self,master):
+        super().__init__(master)
+        self.title("Kelime Pratiği")
+        self.geometry("400x600")
+        self.after(300, self.set_icon)
+        self.resizable(False, False)
+        self.attributes("-topmost", True)
+        self.rowconfigure(0, weight=2)
+        self.rowconfigure(1, weight=0)
+        self.rowconfigure(2, weight=2)
+        self.rowconfigure(3,weight=0)
+        self.rowconfigure(4,weight = 0)
+        self.rowconfigure(5, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
+        self.configure(fg_color="#212121")
+        time = datetime.now().date()
+        sql = "SELECT English,Turkish FROM forapptable WHERE Checked < %s"
+        mycursor.execute(sql, (time,))
+        results = mycursor.fetchall()
+        self.EntryOneChecked = customtkinter.StringVar(value="İngilizce")
+        self.EntryOne = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryOneChecked,fg_color="#474A4C",text_color="white",font=("Cascadia Mono Semibold",16),justify="center")
+        self.EntryOne.grid(row= 0,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
+        profile_img_pil = Image.open("swap.png")
+        profile_img = customtkinter.CTkImage(light_image=profile_img_pil, size=(32, 32))
+        self.switch = customtkinter.CTkButton(self, image=profile_img, text="", fg_color="transparent",hover=False,cursor="hand2",width=10,height=10,anchor="center")
+        self.switch.grid(row=1,column=0,sticky="nswe",columnspan=3)
+        self.EntryTwoChecked = customtkinter.StringVar(value="Türkçe")
+        self.EntryTwo = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryTwoChecked,fg_color="#474A4C",text_color="white",font=("Cascadia Mono Semibold",16),justify="center")
+        self.EntryTwo.grid(row= 2,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
+        self.ButtonFrame = customtkinter.CTkFrame(self)
+        self.ButtonFrame.grid(row = 3,column=0,padx=10,pady=15)
+        self.ButtonFrame.grid_columnconfigure(0, weight=1)
+        self.ButtonFrame.grid_columnconfigure(1, weight=1)
+        self.ButtonFrame.grid_columnconfigure(2, weight=1)
+        self.ButtonFrame.configure(fg_color="#212121")
+        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#529E6C", text="İyi",font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35)
+        self.GoodButton.grid(row=0,column=0,padx=10)
+        self.MedButton = customtkinter.CTkButton(self.ButtonFrame, text="Orta",
+                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,corner_radius=20,fg_color="#C75C25")
+        self.MedButton.grid(row=0, column=1)
+        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#DF3C28", text="Kötü",
+                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35)
+        self.GoodButton.grid(row=0, column=2,padx=10)
+        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20, fg_color="#DF3C28", text="Kötü",
+                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",
+                                                  height=35)
+        self.ButtonsTwoFrame = customtkinter.CTkFrame(self)
+        self.ButtonsTwoFrame.grid(row=4,column=0,columnspan=3,pady=15)
+        self.ButtonsTwoFrame.grid_columnconfigure(0, weight=1)
+        self.ButtonsTwoFrame.grid_columnconfigure(1, weight=1)
+        self.ButtonsTwoFrame.configure(fg_color="#212121")
+        self.AddAiStory = customtkinter.CTkButton(self.ButtonsTwoFrame,fg_color="#181818",text="Hikayeye Ekle",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",height=34)
+        self.AddAiStory.grid(row=0, column=0, padx=10)
+        self.ChangeBtn = customtkinter.CTkButton(self.ButtonsTwoFrame, fg_color="#181818", text="Düzenle",
+                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",
+                                                  height=34)
+        self.ChangeBtn.grid(row=0, column=1, padx=10)
+        self.EntryKalanCheck = customtkinter.StringVar(value="Kalan Kelime 19")
+        self.EntryKalan = customtkinter.CTkEntry(self,textvariable=self.EntryKalanCheck,state="disabled",fg_color="#212121",justify="center",font=("Cascadia Mono Semibold", 13))
+        self.EntryKalan.grid(row=5,column=0,columnspan=3)
+
+
+    def set_icon(self):
+        self.iconbitmap("logom.ico")
 class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
     def __init__(self,master,frame):
         super().__init__(master)
@@ -86,7 +152,6 @@ class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
                                                       width=25)
             self.TurkishWord.grid(row=i + 1, column=1, sticky="NSWE", padx=1, pady=1)
             self.EnglishWord.bind("<Button-1>", self.ClickedLabel)
-
 class TopLevelFrameSettingsRecent(customtkinter.CTkFrame):
     def __init__(self,master,ScrollFrame):
         super().__init__(master)
@@ -194,10 +259,6 @@ class TopLevelFrameSettingsRecent(customtkinter.CTkFrame):
         db.commit()
         self.after(100,self.scrollFrame.NewData())
         self.CheckChoiceButton.set("Silindi")
-
-
-
-
 class ToplevelRemainWord(customtkinter.CTkToplevel):
     def __init__(self, master):
         super().__init__(master)
@@ -219,7 +280,6 @@ class ToplevelRemainWord(customtkinter.CTkToplevel):
 
     def set_icon(self):
         self.iconbitmap("logom.ico")
-
 class TopLevelCreateStoryPage(customtkinter.CTkToplevel):
     def __init__(self,master):
         super().__init__(master)
@@ -405,10 +465,17 @@ class StartPractice(customtkinter.CTkFrame):
         createhead.grid(row = 0,column = 0,pady=5)
         text = "Yeni öğrendiğin ingilizce kelimeleri unutmamak için düzenli olarak tekrar yapmalısın."
         customtkinter.CTkLabel(self,text=text,font=("Cascadia Mono Semibold",12),wraplength=220).grid(row=1,column=0)
+        self.toplevel_window = None
         doPracticeButton = customtkinter.CTkButton(self, text="Pratik Yap", corner_radius=34, fg_color="#582233",
                                                   hover_color="#3F1825", width=150, font=("Cascadia Mono Semibold", 13),
-                                                  hover=True, cursor="hand2")
+                                                  hover=True, cursor="hand2",command=lambda : self.open_toplevel())
         doPracticeButton.grid(row=2,column=0,pady=10)
+
+    def open_toplevel(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = TLPracticeWord(self)
+        else:
+            self.toplevel_window.focus()
 class StartAi(customtkinter.CTkFrame):
     def __init__(self,master):
         super().__init__(master)
