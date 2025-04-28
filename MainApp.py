@@ -8,7 +8,12 @@ from datetime import datetime
 
 
 
-
+db = mysql.connector.connect(
+  host="",
+  user="",
+  password="",
+  database=""
+)
 mycursor = db.cursor()
 class TLPracticeWord(customtkinter.CTkToplevel):
     def __init__(self,master):
@@ -31,32 +36,36 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         time = datetime.now().date()
         sql = "SELECT English,Turkish FROM forapptable WHERE Checked < %s"
         mycursor.execute(sql, (time,))
-        results = mycursor.fetchall()
-        self.EntryOneChecked = customtkinter.StringVar(value="İngilizce")
-        self.EntryOne = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryOneChecked,fg_color="#474A4C",text_color="white",font=("Cascadia Mono Semibold",16),justify="center")
+        self.results = mycursor.fetchall()
+        self.i = 0
+        j = 0
+        self.EntryOneChecked = customtkinter.StringVar(value=self.results[self.i][0])
+        self.EntryOne = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryOneChecked,fg_color="#474A4C",text_color="white",font=("Cascadia Mono Semibold",16),justify="center",border_color="white",border_width=2)
         self.EntryOne.grid(row= 0,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
         profile_img_pil = Image.open("swap.png")
         profile_img = customtkinter.CTkImage(light_image=profile_img_pil, size=(32, 32))
-        self.switch = customtkinter.CTkButton(self, image=profile_img, text="", fg_color="transparent",hover=False,cursor="hand2",width=10,height=10,anchor="center")
+        self.switched = False
+        self.switch = customtkinter.CTkButton(self, image=profile_img, text="", fg_color="transparent",hover=False,cursor="hand2",width=10,height=10,anchor="center",command=self.Switch)
         self.switch.grid(row=1,column=0,sticky="nswe",columnspan=3)
-        self.EntryTwoChecked = customtkinter.StringVar(value="Türkçe")
-        self.EntryTwo = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryTwoChecked,fg_color="#474A4C",text_color="white",font=("Cascadia Mono Semibold",16),justify="center")
-        self.EntryTwo.grid(row= 2,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
+        self.EntryTwoChecked = customtkinter.StringVar(value="")
+        self.EntryTwoBTN = customtkinter.CTkButton(self,textvariable=self.EntryTwoChecked,cursor="hand2",fg_color="#474A4C",text_color="white",hover_color="#3E4142",font=("Cascadia Mono Semibold",16),command=self.Show,border_color="white",border_width=2)
+        self.EntryTwoBTN.grid(row= 2,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
+
         self.ButtonFrame = customtkinter.CTkFrame(self)
         self.ButtonFrame.grid(row = 3,column=0,padx=10,pady=15)
         self.ButtonFrame.grid_columnconfigure(0, weight=1)
         self.ButtonFrame.grid_columnconfigure(1, weight=1)
         self.ButtonFrame.grid_columnconfigure(2, weight=1)
         self.ButtonFrame.configure(fg_color="#212121")
-        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#529E6C", text="İyi",font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35)
+        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#529E6C", text="İyi",font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,command=self.GButtonFunc)
         self.GoodButton.grid(row=0,column=0,padx=10)
         self.MedButton = customtkinter.CTkButton(self.ButtonFrame, text="Orta",
                                                   font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,corner_radius=20,fg_color="#C75C25")
         self.MedButton.grid(row=0, column=1)
-        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#DF3C28", text="Kötü",
+        self.BadButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#DF3C28", text="Kötü",
                                                   font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35)
-        self.GoodButton.grid(row=0, column=2,padx=10)
-        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20, fg_color="#DF3C28", text="Kötü",
+        self.BadButton.grid(row=0, column=2,padx=10)
+        self.BadButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20, fg_color="#DF3C28", text="Kötü",
                                                   font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",
                                                   height=35)
         self.ButtonsTwoFrame = customtkinter.CTkFrame(self)
@@ -73,8 +82,32 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.EntryKalanCheck = customtkinter.StringVar(value="Kalan Kelime 19")
         self.EntryKalan = customtkinter.CTkEntry(self,textvariable=self.EntryKalanCheck,state="disabled",fg_color="#212121",justify="center",font=("Cascadia Mono Semibold", 13))
         self.EntryKalan.grid(row=5,column=0,columnspan=3)
+    def Switch(self):
+        if self.EntryTwoChecked.get() !="":
+            if self.switched== False:
+                self.switched = True
+            else:self.switched= False
+            self.Show()
+            if self.switched:
+                self.EntryOneChecked.set(value=self.results[self.i][1])
+            else:
+                self.EntryOneChecked.set(value=self.results[self.i][0])
+    def Show(self):
+        if self.switched:
+            self.EntryTwoChecked.set(value=self.results[self.i][0])
+        else:
+            self.EntryTwoChecked.set(value=self.results[self.i][1])
+    def GButtonFunc(self):
+        self.NextFunc()
 
-
+    def NextFunc(self):
+        if self.EntryTwoChecked.get() !="":
+            self.i = self.i+1
+            if self.switched:
+                self.EntryOneChecked.set(value=self.results[self.i][1])
+            else:
+                self.EntryOneChecked.set(value=self.results[self.i][0])
+            self.EntryTwoChecked.set(value="")
     def set_icon(self):
         self.iconbitmap("logom.ico")
 class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
