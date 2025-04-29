@@ -6,6 +6,7 @@ import customtkinter
 import mysql.connector
 
 mycursor = db.cursor()
+
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()

@@ -9,10 +9,7 @@ from datetime import datetime
 
 
 db = mysql.connector.connect(
-  host="",
-  user="",
-  password="",
-  database=""
+
 )
 mycursor = db.cursor()
 class TLPracticeWord(customtkinter.CTkToplevel):
@@ -34,11 +31,11 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.grid_columnconfigure(2, weight=1)
         self.configure(fg_color="#212121")
         time = datetime.now().date()
-        sql = "SELECT English,Turkish FROM forapptable WHERE Checked < %s"
+        sql = "SELECT English,Turkish,AdAi FROM forapptable WHERE Checked < %s"
         mycursor.execute(sql, (time,))
         self.results = mycursor.fetchall()
         self.i = 0
-        j = 0
+        self.changed = self.results[self.i][2]
         self.EntryOneChecked = customtkinter.StringVar(value=self.results[self.i][0])
         self.EntryOne = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryOneChecked,fg_color="#474A4C",text_color="white",font=("Cascadia Mono Semibold",16),justify="center",border_color="white",border_width=2)
         self.EntryOne.grid(row= 0,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
@@ -50,7 +47,6 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.EntryTwoChecked = customtkinter.StringVar(value="")
         self.EntryTwoBTN = customtkinter.CTkButton(self,textvariable=self.EntryTwoChecked,cursor="hand2",fg_color="#474A4C",text_color="white",hover_color="#3E4142",font=("Cascadia Mono Semibold",16),command=self.Show,border_color="white",border_width=2)
         self.EntryTwoBTN.grid(row= 2,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
-
         self.ButtonFrame = customtkinter.CTkFrame(self)
         self.ButtonFrame.grid(row = 3,column=0,padx=10,pady=15)
         self.ButtonFrame.grid_columnconfigure(0, weight=1)
@@ -73,15 +69,67 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.ButtonsTwoFrame.grid_columnconfigure(0, weight=1)
         self.ButtonsTwoFrame.grid_columnconfigure(1, weight=1)
         self.ButtonsTwoFrame.configure(fg_color="#212121")
-        self.AddAiStory = customtkinter.CTkButton(self.ButtonsTwoFrame,fg_color="#181818",text="Hikayeye Ekle",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",height=34)
+        self.AddAiStoryCheck = customtkinter.StringVar()
+        self.AddAiText()
+        self.AddAiStory = customtkinter.CTkButton(self.ButtonsTwoFrame,fg_color="#181818",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",height=34,command=self.AddAi,textvariable=self.AddAiStoryCheck)
         self.AddAiStory.grid(row=0, column=0, padx=10)
         self.ChangeBtn = customtkinter.CTkButton(self.ButtonsTwoFrame, fg_color="#181818", text="Düzenle",
                                                   font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",
-                                                  height=34)
+                                                  height=34,command=self.Change)
         self.ChangeBtn.grid(row=0, column=1, padx=10)
         self.EntryKalanCheck = customtkinter.StringVar(value="Kalan Kelime 19")
         self.EntryKalan = customtkinter.CTkEntry(self,textvariable=self.EntryKalanCheck,state="disabled",fg_color="#212121",justify="center",font=("Cascadia Mono Semibold", 13))
         self.EntryKalan.grid(row=5,column=0,columnspan=3)
+    def Change(self):
+        def set_icon():
+            root.iconbitmap("logom.ico")
+        root = customtkinter.CTkToplevel(self)
+        root.geometry("300x300")
+        root.resizable(False, False)
+        root.attributes("-topmost", True)
+        root.title('Değiştir')
+        root.configure(fg_color="#212121")
+        root.after(300, set_icon)
+        root.columnconfigure(0,weight=1)
+        root.rowconfigure(0,weight=4)
+        root.rowconfigure(1,weight=4)
+        root.rowconfigure(2,weight=2)
+
+        self.CheckEnglishİnput = customtkinter.StringVar(value=self.results[self.i][0])
+        self.CheckTurkishİnput = customtkinter.StringVar(value=self.results[self.i][1])
+        Englishİnput = customtkinter.CTkEntry(root, textvariable=self.CheckEnglishİnput, fg_color="#474A4C", width=100,
+                                              text_color="white", corner_radius=9, placeholder_text_color="white",
+                                              font=('Cascadia Mono Semibold', 13))
+        Englishİnput.grid(row=0, column=0, sticky="WE", padx=50, pady=50)
+        Turkishİnput = customtkinter.CTkEntry(root, textvariable=self.CheckTurkishİnput, fg_color="#474A4C", width=100,
+                                              text_color="white", corner_radius=9, placeholder_text_color="white",
+                                              font=('Cascadia Mono Semibold', 13))
+        Turkishİnput.grid(row=1, column=0, sticky="WE", padx=50)
+        ChangesBtn = customtkinter.CTkButton(root, text="Değiştir", corner_radius=34, fg_color="#582233",
+                                             hover_color="#3F1825", width=150, font=("Cascadia Mono Semibold", 13),
+                                             hover=True, cursor="hand2")
+        ChangesBtn.grid(row=3, column=0, pady=50)
+        root.mainloop()
+
+    def AddAiText(self):
+        if self.changed == 1:
+            self.AddAiStoryCheck.set(value="Hikayeden Çıkar")
+        else:
+            self.AddAiStoryCheck.set(value="Hikayeye Ekle")
+    def AddAi(self):
+        if self.changed == 1:
+            self.changed=0
+            self.AddAiStoryCheck.set("Hikayeye Ekle")
+        else:
+            self.changed=1
+            self.AddAiStoryCheck.set("Hikayeden Çıkar")
+        query = f"UPDATE forapptable SET AdAi = {self.changed} WHERE English = %s"
+        value = (self.results[self.i][0],)
+        mycursor.execute(query,value)
+        db.commit()
+        self.AddAiStory.configure(fg_color="#3F7D58")
+        self.after(500,lambda: self.AddAiStory.configure(fg_color="#181818"))
+
     def Switch(self):
         if self.EntryTwoChecked.get() !="":
             if self.switched== False:
@@ -108,6 +156,9 @@ class TLPracticeWord(customtkinter.CTkToplevel):
             else:
                 self.EntryOneChecked.set(value=self.results[self.i][0])
             self.EntryTwoChecked.set(value="")
+            self.changed = self.results[self.i][2]
+            self.AddAiText()
+
     def set_icon(self):
         self.iconbitmap("logom.ico")
 class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
