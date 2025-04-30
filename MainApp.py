@@ -9,7 +9,10 @@ from datetime import datetime
 
 
 db = mysql.connector.connect(
-
+    host="",
+    user="",
+    password="",
+    database=""
 )
 mycursor = db.cursor()
 class TLPracticeWord(customtkinter.CTkToplevel):
@@ -31,10 +34,11 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.grid_columnconfigure(2, weight=1)
         self.configure(fg_color="#212121")
         time = datetime.now().date()
-        sql = "SELECT English,Turkish,AdAi FROM forapptable WHERE Checked < %s"
+        sql = "SELECT English,Turkish,AdAi,Repeats FROM forapptable WHERE Checked < %s LIMIT 20"
         mycursor.execute(sql, (time,))
         self.results = mycursor.fetchall()
         self.i = 0
+        self.multiple = 0
         self.changed = self.results[self.i][2]
         self.EntryOneChecked = customtkinter.StringVar(value=self.results[self.i][0])
         self.EntryOne = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryOneChecked,fg_color="#474A4C",text_color="white",font=("Cascadia Mono Semibold",16),justify="center",border_color="white",border_width=2)
@@ -53,17 +57,14 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.ButtonFrame.grid_columnconfigure(1, weight=1)
         self.ButtonFrame.grid_columnconfigure(2, weight=1)
         self.ButtonFrame.configure(fg_color="#212121")
-        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#529E6C", text="İyi",font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,command=self.GButtonFunc)
+        self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#529E6C", text="İyi",font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,command=self.ScaleGoodButton)
         self.GoodButton.grid(row=0,column=0,padx=10)
         self.MedButton = customtkinter.CTkButton(self.ButtonFrame, text="Orta",
-                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,corner_radius=20,fg_color="#C75C25")
+                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,corner_radius=20,fg_color="#C75C25",command=self.ScaleMidButton)
         self.MedButton.grid(row=0, column=1)
         self.BadButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#DF3C28", text="Kötü",
-                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35)
+                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,command=self.ScaleBadButton)
         self.BadButton.grid(row=0, column=2,padx=10)
-        self.BadButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20, fg_color="#DF3C28", text="Kötü",
-                                                  font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",
-                                                  height=35)
         self.ButtonsTwoFrame = customtkinter.CTkFrame(self)
         self.ButtonsTwoFrame.grid(row=4,column=0,columnspan=3,pady=15)
         self.ButtonsTwoFrame.grid_columnconfigure(0, weight=1)
@@ -77,10 +78,22 @@ class TLPracticeWord(customtkinter.CTkToplevel):
                                                   font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",
                                                   height=34,command=self.Change)
         self.ChangeBtn.grid(row=0, column=1, padx=10)
-        self.EntryKalanCheck = customtkinter.StringVar(value="Kalan Kelime 19")
+        self.Kalan = 19
+        self.EntryKalanCheck = customtkinter.StringVar(value=f"Kalan Kelime {self.Kalan}")
         self.EntryKalan = customtkinter.CTkEntry(self,textvariable=self.EntryKalanCheck,state="disabled",fg_color="#212121",justify="center",font=("Cascadia Mono Semibold", 13))
         self.EntryKalan.grid(row=5,column=0,columnspan=3)
     def Change(self):
+        def BtnChange():
+            Eng = self.CheckEnglishİnput.get()
+            Tr = self.CheckTurkishİnput.get()
+            query = "UPDATE forapptable SET English = %s, Turkish = %s WHERE English = %s"
+            val = (Eng,Tr,self.results[self.i][0])
+            mycursor.execute(query,val)
+            self.EntryOneChecked.set(value=Eng)
+            self.EntryTwoChecked.set(value=Tr)
+            db.commit()
+
+
         def set_icon():
             root.iconbitmap("logom.ico")
         root = customtkinter.CTkToplevel(self)
@@ -107,7 +120,7 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         Turkishİnput.grid(row=1, column=0, sticky="WE", padx=50)
         ChangesBtn = customtkinter.CTkButton(root, text="Değiştir", corner_radius=34, fg_color="#582233",
                                              hover_color="#3F1825", width=150, font=("Cascadia Mono Semibold", 13),
-                                             hover=True, cursor="hand2")
+                                             hover=True, cursor="hand2",command=BtnChange)
         ChangesBtn.grid(row=3, column=0, pady=50)
         root.mainloop()
 
@@ -145,8 +158,32 @@ class TLPracticeWord(customtkinter.CTkToplevel):
             self.EntryTwoChecked.set(value=self.results[self.i][0])
         else:
             self.EntryTwoChecked.set(value=self.results[self.i][1])
-    def GButtonFunc(self):
-        self.NextFunc()
+    def ScaleGoodButton(self):
+        self.multiple = 2
+        self.AfterRepeatSettings()
+    def ScaleBadButton(self):
+        self.multiple = 0.5
+        self.AfterRepeatSettings()
+    def ScaleMidButton(self):
+        self.multiple = 1
+        self.AfterRepeatSettings()
+    def AfterRepeatSettings(self):
+        if self.EntryTwoChecked.get() == "":
+            return
+        if self.Kalan > 0 :
+            afterRepeatTime = 24*self.multiple*(self.results[self.i][3]+1)
+            query = f"UPDATE forapptable SET Checked = DATE_ADD(NOW(),INTERVAL %s HOUR) WHERE English = %s"
+            value = (afterRepeatTime,self.results[self.i][0],)
+            mycursor.execute(query,value)
+            db.commit()
+            query = f"UPDATE forapptable SET Repeats = %s + 1 Where English =%s"
+            value = (self.results[self.i][3],self.results[self.i][0])
+            mycursor.execute(query,value)
+            db.commit()
+            self.NextFunc()
+        else:
+            self.destroy()
+
 
     def NextFunc(self):
         if self.EntryTwoChecked.get() !="":
@@ -158,6 +195,8 @@ class TLPracticeWord(customtkinter.CTkToplevel):
             self.EntryTwoChecked.set(value="")
             self.changed = self.results[self.i][2]
             self.AddAiText()
+            self.Kalan = self.Kalan-1
+            self.EntryKalanCheck.set(value =f"Kalan Kelime = {self.Kalan}")
 
     def set_icon(self):
         self.iconbitmap("logom.ico")
