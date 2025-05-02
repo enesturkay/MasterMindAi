@@ -12,10 +12,17 @@ db = mysql.connector.connect(
 
 )
 mycursor = db.cursor()
+ColorBg = "#181818"
+ColorFrame = "#212121"
+ColorButton = "#582233"
+ColorButtonHover= "#3F1825"
+ColorEntry = "#474A4C"
 class AISettings(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
-        self.configure(fg_color="#181818")
+        self.configure(fg_color=ColorBg
+
+)
         self.columnconfigure(0,weight=5)
         self.columnconfigure(1,weight=5)
         self.rowconfigure(0,weight=1)
@@ -57,7 +64,7 @@ class AISettings(customtkinter.CTkFrame):
         self.PracticeCountChecked = customtkinter.IntVar(value = self.result[0][4])
         self.PracticeCount = customtkinter.CTkEntry(self,textvariable=self.PracticeCountChecked)
         self.PracticeCount.grid(row=6, column=1)
-        saveButton = customtkinter.CTkButton(self, text="Değiştir", corner_radius=34, fg_color="#582233", hover_color="#3F1825",width=150, font=("Cascadia Mono Semibold", 13), hover=True, cursor="hand2",command=self.Submit)
+        saveButton = customtkinter.CTkButton(self, text="Değiştir", corner_radius=34, fg_color=ColorButton , hover_color=ColorButtonHover,width=150, font=("Cascadia Mono Semibold", 13), hover=True, cursor="hand2",command=self.Submit)
         saveButton.grid(row=7,column=0,columnspan=2)
 
 
@@ -94,7 +101,7 @@ class OpenSettings(customtkinter.CTkToplevel):
         self.after(300, self.set_icon)
         self.resizable(False, False)
         self.attributes("-topmost", True)
-        self.configure(fg_color="#212121")
+        self.configure(fg_color=ColorFrame)
         self.rowconfigure(0,weight=1)
         self.columnconfigure(0,weight=1)
         self.AiSettings = AISettings(self)
@@ -122,7 +129,7 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
-        self.configure(fg_color="#212121")
+        self.configure(fg_color=ColorFrame)
         time = datetime.now().date()
         mycursor.execute("SELECT MaksWordCount FROM profilesettings WHERE id=1")
         resultCount = mycursor.fetchone()
@@ -135,7 +142,7 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.multiple = 0
         self.changed = self.results[self.i][2]
         self.EntryOneChecked = customtkinter.StringVar(value=self.results[self.i][0])
-        self.EntryOne = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryOneChecked,fg_color="#474A4C",text_color="white",font=("Cascadia Mono Semibold",16),justify="center",border_color="white",border_width=2)
+        self.EntryOne = customtkinter.CTkEntry(self,state="disabled",textvariable=self.EntryOneChecked,fg_color=ColorEntry,text_color="white",font=("Cascadia Mono Semibold",16),justify="center",border_color="white",border_width=2)
         self.EntryOne.grid(row= 0,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
         profile_img_pil = Image.open("swap.png")
         profile_img = customtkinter.CTkImage(light_image=profile_img_pil, size=(32, 32))
@@ -143,14 +150,14 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.switch = customtkinter.CTkButton(self, image=profile_img, text="", fg_color="transparent",hover=False,cursor="hand2",width=10,height=10,anchor="center",command=self.Switch)
         self.switch.grid(row=1,column=0,sticky="nswe",columnspan=3)
         self.EntryTwoChecked = customtkinter.StringVar(value="")
-        self.EntryTwoBTN = customtkinter.CTkButton(self,textvariable=self.EntryTwoChecked,cursor="hand2",fg_color="#474A4C",text_color="white",hover_color="#3E4142",font=("Cascadia Mono Semibold",16),command=self.Show,border_color="white",border_width=2)
+        self.EntryTwoBTN = customtkinter.CTkButton(self,textvariable=self.EntryTwoChecked,cursor="hand2",fg_color=ColorEntry,text_color="white",hover_color="#3E4142",font=("Cascadia Mono Semibold",16),command=self.Show,border_color="white",border_width=2)
         self.EntryTwoBTN.grid(row= 2,column = 0,columnspan = 3,sticky="nswe",padx=30,pady=15)
         self.ButtonFrame = customtkinter.CTkFrame(self)
         self.ButtonFrame.grid(row = 3,column=0,padx=10,pady=15)
         self.ButtonFrame.grid_columnconfigure(0, weight=1)
         self.ButtonFrame.grid_columnconfigure(1, weight=1)
         self.ButtonFrame.grid_columnconfigure(2, weight=1)
-        self.ButtonFrame.configure(fg_color="#212121")
+        self.ButtonFrame.configure(fg_color=ColorFrame)
         self.GoodButton = customtkinter.CTkButton(self.ButtonFrame, corner_radius=20,fg_color="#529E6C", text="İyi",font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",height=35,command=self.ScaleGoodButton)
         self.GoodButton.grid(row=0,column=0,padx=10)
         self.MedButton = customtkinter.CTkButton(self.ButtonFrame, text="Orta",
@@ -163,17 +170,21 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.ButtonsTwoFrame.grid(row=4,column=0,columnspan=3,pady=15)
         self.ButtonsTwoFrame.grid_columnconfigure(0, weight=1)
         self.ButtonsTwoFrame.grid_columnconfigure(1, weight=1)
-        self.ButtonsTwoFrame.configure(fg_color="#212121")
+        self.ButtonsTwoFrame.configure(fg_color=ColorFrame)
         self.AddAiStoryCheck = customtkinter.StringVar()
         self.AddAiText()
-        self.AddAiStory = customtkinter.CTkButton(self.ButtonsTwoFrame,fg_color="#181818",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",height=34,command=self.AddAi,textvariable=self.AddAiStoryCheck)
+        self.AddAiStory = customtkinter.CTkButton(self.ButtonsTwoFrame,fg_color=ColorBg
+
+,font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",height=34,command=self.AddAi,textvariable=self.AddAiStoryCheck)
         self.AddAiStory.grid(row=0, column=0, padx=10)
-        self.ChangeBtn = customtkinter.CTkButton(self.ButtonsTwoFrame, fg_color="#181818", text="Düzenle",
+        self.ChangeBtn = customtkinter.CTkButton(self.ButtonsTwoFrame, fg_color=ColorBg
+
+, text="Düzenle",
                                                   font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",
                                                   height=34,command=self.Change)
         self.ChangeBtn.grid(row=0, column=1, padx=10)
         self.EntryKalanCheck = customtkinter.StringVar(value=f"Kalan Kelime {self.Kalan-1}")
-        self.EntryKalan = customtkinter.CTkEntry(self,textvariable=self.EntryKalanCheck,state="disabled",fg_color="#212121",justify="center",font=("Cascadia Mono Semibold", 13))
+        self.EntryKalan = customtkinter.CTkEntry(self,textvariable=self.EntryKalanCheck,state="disabled",fg_color=ColorFrame,justify="center",font=("Cascadia Mono Semibold", 13))
         self.EntryKalan.grid(row=5,column=0,columnspan=3)
     def Change(self):
         def BtnChange():
@@ -194,7 +205,7 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         root.resizable(False, False)
         root.attributes("-topmost", True)
         root.title('Değiştir')
-        root.configure(fg_color="#212121")
+        root.configure(fg_color=ColorFrame)
         root.after(300, set_icon)
         root.columnconfigure(0,weight=1)
         root.rowconfigure(0,weight=4)
@@ -203,16 +214,16 @@ class TLPracticeWord(customtkinter.CTkToplevel):
 
         self.CheckEnglishİnput = customtkinter.StringVar(value=self.results[self.i][0])
         self.CheckTurkishİnput = customtkinter.StringVar(value=self.results[self.i][1])
-        Englishİnput = customtkinter.CTkEntry(root, textvariable=self.CheckEnglishİnput, fg_color="#474A4C", width=100,
+        Englishİnput = customtkinter.CTkEntry(root, textvariable=self.CheckEnglishİnput, fg_color=ColorEntry, width=100,
                                               text_color="white", corner_radius=9, placeholder_text_color="white",
                                               font=('Cascadia Mono Semibold', 13))
         Englishİnput.grid(row=0, column=0, sticky="WE", padx=50, pady=50)
-        Turkishİnput = customtkinter.CTkEntry(root, textvariable=self.CheckTurkishİnput, fg_color="#474A4C", width=100,
+        Turkishİnput = customtkinter.CTkEntry(root, textvariable=self.CheckTurkishİnput, fg_color=ColorEntry, width=100,
                                               text_color="white", corner_radius=9, placeholder_text_color="white",
                                               font=('Cascadia Mono Semibold', 13))
         Turkishİnput.grid(row=1, column=0, sticky="WE", padx=50)
-        ChangesBtn = customtkinter.CTkButton(root, text="Değiştir", corner_radius=34, fg_color="#582233",
-                                             hover_color="#3F1825", width=150, font=("Cascadia Mono Semibold", 13),
+        ChangesBtn = customtkinter.CTkButton(root, text="Değiştir", corner_radius=34, fg_color=ColorButton ,
+                                             hover_color=ColorButtonHover, width=150, font=("Cascadia Mono Semibold", 13),
                                              hover=True, cursor="hand2",command=BtnChange)
         ChangesBtn.grid(row=3, column=0, pady=50)
         root.mainloop()
@@ -234,7 +245,9 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         mycursor.execute(query,value)
         db.commit()
         self.AddAiStory.configure(fg_color="#3F7D58")
-        self.after(500,lambda: self.AddAiStory.configure(fg_color="#181818"))
+        self.after(500,lambda: self.AddAiStory.configure(fg_color=ColorBg
+
+))
 
     def Switch(self):
         if self.EntryTwoChecked.get() !="":
@@ -300,9 +313,11 @@ class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
         self.columnconfigure(0,weight = 1,minsize=200)
         self.columnconfigure(1,weight=1,minsize=200)
         self.columnconfigure(2,weight = 0)
-        self.configure(fg_color="#181818")
-        customtkinter.CTkLabel(self,text="İngilizce",fg_color="#212121",font=("Cascadia Mono Semibold",13),corner_radius=7,height=35).grid(row=0,column=0,sticky="NSWE",padx=1,pady=6)
-        customtkinter.CTkLabel(self,text="Türkçe",fg_color="#212121",font=("Cascadia Mono Semibold",13),corner_radius=7,height=35).grid(row=0,column=1,sticky="NSWE",padx=1,pady=6)
+        self.configure(fg_color=ColorBg
+
+)
+        customtkinter.CTkLabel(self,text="İngilizce",fg_color=ColorFrame,font=("Cascadia Mono Semibold",13),corner_radius=7,height=35).grid(row=0,column=0,sticky="NSWE",padx=1,pady=6)
+        customtkinter.CTkLabel(self,text="Türkçe",fg_color=ColorFrame,font=("Cascadia Mono Semibold",13),corner_radius=7,height=35).grid(row=0,column=1,sticky="NSWE",padx=1,pady=6)
         self.NewData()
     def NewData(self):
         for widget in self.winfo_children():
@@ -314,9 +329,9 @@ class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
         mycursor.execute(sqlQuest)
         result = mycursor.fetchall()
         for i in range(row_count):
-            colored = "#212121"
+            colored = ColorFrame
             if i % 2 == 0:
-                colored="#3F1825"
+                colored=ColorButtonHover
             self.EnglishWord = customtkinter.CTkLabel(self,text=result[i][0],fg_color=colored,font=("Cascadia Mono Semibold",12),corner_radius=5,width=25,cursor="hand2")
             self.EnglishWord.grid(row=i+1,column=0,sticky="NSWE",padx=1,pady=1)
             self.TurkishWord = customtkinter.CTkLabel(self,text=result[i][1],fg_color=colored,font=("Cascadia Mono Semibold",12),corner_radius=5,width=25)
@@ -336,9 +351,9 @@ class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
         mycursor.execute(sql, (f"%{event}%",))
         result= mycursor.fetchall()
         for i in range(len(result)):
-            colored = "#212121"
+            colored = ColorFrame
             if i % 2 == 0:
-                colored = "#3F1825"
+                colored = ColorButtonHover
             self.EnglishWord = customtkinter.CTkLabel(self, text=result[i][0], fg_color=colored,
                                                       font=("Cascadia Mono Semibold", 12), corner_radius=5, width=25,
                                                       cursor="hand2")
@@ -355,9 +370,9 @@ class TLRemainWordFrame(customtkinter.CTkScrollableFrame):
         mycursor.execute(query)
         result = mycursor.fetchall()
         for i in range(len(result)):
-            colored = "#212121"
+            colored = ColorFrame
             if i % 2 == 0:
-                colored = "#3F1825"
+                colored = ColorButtonHover
             self.EnglishWord = customtkinter.CTkLabel(self, text=result[i][0], fg_color=colored,
                                                       font=("Cascadia Mono Semibold", 12), corner_radius=5,
                                                       width=25,
@@ -372,25 +387,33 @@ class TopLevelFrameSettingsRecent(customtkinter.CTkFrame):
     def __init__(self,master,ScrollFrame):
         super().__init__(master)
         self.scrollFrame = ScrollFrame
-        self.configure(fg_color="#212121")
+        self.configure(fg_color=ColorFrame)
         self.columnconfigure(0,weight = 2,minsize = 40)
         self.columnconfigure(1,weight = 4,minsize = 100)
         self.rowconfigure(0,weight=1)
         self.rowconfigure(1,weight=1)
         self.rowconfigure(2,weight = 1)
         self.CheckChoiceButton =customtkinter.StringVar(value="Henüz seçilmedi")
-        self.ChoiceButton = customtkinter.CTkButton(self,fg_color="#212121",textvariable=self.CheckChoiceButton,font=("Cascadia Mono Semibold",13),hover=False)
+        self.ChoiceButton = customtkinter.CTkButton(self,fg_color=ColorFrame,textvariable=self.CheckChoiceButton,font=("Cascadia Mono Semibold",13),hover=False)
         self.ChoiceButton.grid(row=0,column=0,padx=10)
-        self.DeleteButton = customtkinter.CTkButton(self,fg_color="#181818",text="Sil",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",command=self.Delete)
+        self.DeleteButton = customtkinter.CTkButton(self,fg_color=ColorBg
+
+,text="Sil",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",command=self.Delete)
         self.DeleteButton.grid(row=0,column = 1,padx=10)
-        self.ChangeButton = customtkinter.CTkButton(self,fg_color="#181818",text="Değiştir",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",command=self.Changes)
+        self.ChangeButton = customtkinter.CTkButton(self,fg_color=ColorBg
+
+,text="Değiştir",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",command=self.Changes)
         self.ChangeButton.grid(row=1,column = 1,padx=10)
         self.SearchEntryCheck = customtkinter.StringVar(value="Ara..")
         self.SearchEntry = customtkinter.CTkEntry(self,width=50,font=("Cascadia Mono Semibold",13),textvariable=self.SearchEntryCheck)
         self.SearchEntry.grid(row=1,column=0,sticky="NSWE",padx=10,pady=10)
-        self.AddAiBtn = customtkinter.CTkButton(self,fg_color="#181818",text="Hikayeye Ekle/Çıkar",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",command=self.AddAi)
+        self.AddAiBtn = customtkinter.CTkButton(self,fg_color=ColorBg
+
+,text="Hikayeye Ekle/Çıkar",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",command=self.AddAi)
         self.AddAiBtn.grid(row=2,column=0)
-        self.ShowAddedAiBtn = customtkinter.CTkButton(self,fg_color="#181818",text="Göster/Gizle",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",command=self.ShowAi)
+        self.ShowAddedAiBtn = customtkinter.CTkButton(self,fg_color=ColorBg
+
+,text="Göster/Gizle",font=("Cascadia Mono Semibold",13),hover=False,cursor="hand2",command=self.ShowAi)
         self.ShowAddedAiBtn.grid(row=2,column=1)
         self.Check=0
         self.SearchEntry.bind("<FocusIn>",self.EntryFocusIn)
@@ -448,7 +471,7 @@ class TopLevelFrameSettingsRecent(customtkinter.CTkFrame):
         root.resizable(False, False)
         root.attributes("-topmost", True)
         root.title('Değiştir')
-        root.configure(fg_color="#212121")
+        root.configure(fg_color=ColorFrame)
         root.after(300, set_icon)
         root.columnconfigure(0,weight=1)
         root.rowconfigure(0,weight=4)
@@ -460,11 +483,11 @@ class TopLevelFrameSettingsRecent(customtkinter.CTkFrame):
         result = mycursor.fetchall()
         self.CheckEnglishİnput = customtkinter.StringVar(value=result[0][0])
         self.CheckTurkishİnput =customtkinter.StringVar(value=result[0][1])
-        Englishİnput = customtkinter.CTkEntry(root,textvariable=self.CheckEnglishİnput,fg_color="#474A4C",width=100,text_color="white",corner_radius=9,placeholder_text_color="white",font=('Cascadia Mono Semibold',13))
+        Englishİnput = customtkinter.CTkEntry(root,textvariable=self.CheckEnglishİnput,fg_color=ColorEntry,width=100,text_color="white",corner_radius=9,placeholder_text_color="white",font=('Cascadia Mono Semibold',13))
         Englishİnput.grid(row=0,column=0,sticky="WE",padx=50,pady=50)
-        Turkishİnput = customtkinter.CTkEntry(root,textvariable=self.CheckTurkishİnput,fg_color="#474A4C",width=100,text_color="white",corner_radius=9,placeholder_text_color="white",font=('Cascadia Mono Semibold',13))
+        Turkishİnput = customtkinter.CTkEntry(root,textvariable=self.CheckTurkishİnput,fg_color=ColorEntry,width=100,text_color="white",corner_radius=9,placeholder_text_color="white",font=('Cascadia Mono Semibold',13))
         Turkishİnput.grid(row=1, column=0, sticky="WE", padx=50)
-        ChangesBtn = customtkinter.CTkButton(root, text="Değiştir", corner_radius=34, fg_color="#582233", hover_color="#3F1825",width=150, font=("Cascadia Mono Semibold", 13), hover=True, cursor="hand2",command=ChangeBtn)
+        ChangesBtn = customtkinter.CTkButton(root, text="Değiştir", corner_radius=34, fg_color=ColorButton , hover_color=ColorButtonHover,width=150, font=("Cascadia Mono Semibold", 13), hover=True, cursor="hand2",command=ChangeBtn)
         ChangesBtn.grid(row=3, column=0,pady=50)
         root.mainloop()
 
@@ -482,7 +505,7 @@ class ToplevelRemainWord(customtkinter.CTkToplevel):
         self.resizable(False,False)
         self.attributes("-topmost", True)
         self.title('Son Eklenen Kelimeler')
-        self.configure(fg_color="#212121")
+        self.configure(fg_color=ColorFrame)
         self.after(300, self.set_icon)
         self.columnconfigure(0,weight=1)
         self.rowconfigure(0,weight=9)
@@ -502,16 +525,18 @@ class TopLevelCreateStoryPage(customtkinter.CTkToplevel):
         self.rowconfigure(0,weight =9)
         self.rowconfigure(1,weight = 1)
         self.columnconfigure(0,weight=1)
-        self.configure(fg_color="#212121")
+        self.configure(fg_color=ColorFrame)
         self.after(300, self.set_icon)
         self.geometry("900x600")
         self.resizable(False, False)
         self.attributes("-topmost", True)
         self.title('Hikaye Oluştur')
-        self.TextBox = customtkinter.CTkTextbox(self,state="disabled",fg_color="#181818")
+        self.TextBox = customtkinter.CTkTextbox(self,state="disabled",fg_color=ColorBg
+
+)
         self.TextBox.grid(row = 0,column= 0,sticky="NSWE",padx=15,pady=15)
 
-        self.createBtn = customtkinter.CTkButton(self,text="Hikaye Oluştur",corner_radius=34 ,fg_color="#582233",hover_color="#3F1825",width=150,font=("Cascadia Mono Semibold",13),hover=True,cursor="hand2",command=self.QueryAi)
+        self.createBtn = customtkinter.CTkButton(self,text="Hikaye Oluştur",corner_radius=34 ,fg_color=ColorButton ,hover_color=ColorButtonHover,width=150,font=("Cascadia Mono Semibold",13),hover=True,cursor="hand2",command=self.QueryAi)
         self.createBtn.grid(row=1,column=0,padx=15,pady=15)
 
 
@@ -542,7 +567,9 @@ class TopLevelCreateStoryPage(customtkinter.CTkToplevel):
             print("Hata ",e)
     def update_text(self, new_text):
         self.TextBox.destroy()
-        self.newText = customtkinter.CTkLabel(self,text = new_text,wraplength=700,font=("Cascadia Mono Semibold", 15),fg_color="#181818",corner_radius=9)
+        self.newText = customtkinter.CTkLabel(self,text = new_text,wraplength=700,font=("Cascadia Mono Semibold", 15),fg_color=ColorBg
+
+,corner_radius=9)
         self.newText.grid(row = 0,column= 0,sticky="NSWE",padx=15,pady=15)
 
 
@@ -556,7 +583,9 @@ class TopLevelCreateStoryPage(customtkinter.CTkToplevel):
 class CreateNewCart(customtkinter.CTkFrame):
     def __init__(self,master):
         super().__init__(master)
-        self.configure(fg_color="#181818")
+        self.configure(fg_color=ColorBg
+
+)
         self.columnconfigure(0,weight =1)
         self.rowconfigure(0,weight=3)
         self.rowconfigure(1,weight=2)
@@ -566,12 +595,12 @@ class CreateNewCart(customtkinter.CTkFrame):
         createhead = customtkinter.CTkLabel(self,text="Hemen Kart Oluştur",text_color="white",font=("Cascadia Mono Semibold",16))
         createhead.grid(row = 0,column = 0)
         self.EnglishEntryCheck = customtkinter.StringVar(value = "İngilizce")
-        self.EnglishEntry  = customtkinter.CTkEntry(self,placeholder_text="İngilizce",fg_color="#474A4C",width=50,text_color="white",corner_radius=9,placeholder_text_color="white",font=('Cascadia Mono Semibold',13),textvariable=self.EnglishEntryCheck)
+        self.EnglishEntry  = customtkinter.CTkEntry(self,placeholder_text="İngilizce",fg_color=ColorEntry,width=50,text_color="white",corner_radius=9,placeholder_text_color="white",font=('Cascadia Mono Semibold',13),textvariable=self.EnglishEntryCheck)
         self.EnglishEntry.grid(row = 1 ,column =0,sticky="we",padx=50)
         self.TurkishEntryCheck = customtkinter.StringVar(value="Türkçe")
-        self.TurkishEntry = customtkinter.CTkEntry(self, placeholder_text="Türkçe", fg_color="#474A4C", width=50,text_color="white", corner_radius=9, placeholder_text_color="white",font=('Cascadia Mono Semibold',13),textvariable=self.TurkishEntryCheck)
+        self.TurkishEntry = customtkinter.CTkEntry(self, placeholder_text="Türkçe", fg_color=ColorEntry, width=50,text_color="white", corner_radius=9, placeholder_text_color="white",font=('Cascadia Mono Semibold',13),textvariable=self.TurkishEntryCheck)
         self.TurkishEntry.grid(row=2, column=0, sticky="we", padx=50 )
-        self.MoreButton = customtkinter.CTkButton(self,text="Kelime Ekle",corner_radius=34 ,fg_color="#582233",hover_color="#3F1825",width=150,font=("Cascadia Mono Semibold",13),hover=True,cursor="hand2",command=self.AddDataBase)
+        self.MoreButton = customtkinter.CTkButton(self,text="Kelime Ekle",corner_radius=34 ,fg_color=ColorButton ,hover_color=ColorButtonHover,width=150,font=("Cascadia Mono Semibold",13),hover=True,cursor="hand2",command=self.AddDataBase)
         self.MoreButton.grid(row=3,column=0)
         self.TurkishEntry.bind("<FocusIn>", self.on_focus_in_Turkish)
         self.TurkishEntry.bind("<FocusOut>", self.on_focus_out_Turkish)
@@ -614,7 +643,9 @@ class CreateNewCart(customtkinter.CTkFrame):
 class RecentWord(customtkinter.CTkFrame):
     def __init__(self,master):
         super().__init__(master)
-        self.configure(fg_color="#181818")
+        self.configure(fg_color=ColorBg
+
+)
         self.columnconfigure(0,weight =1)
         self.rowconfigure(0,weight=3)
         self.rowconfigure(1,weight=1)
@@ -638,7 +669,7 @@ class RecentWord(customtkinter.CTkFrame):
         self.labelFourCheck = customtkinter.StringVar()
         labelFour = customtkinter.CTkLabel(self, text="• And One More", font=("Cascadia Mono Semibold", 13),textvariable = self.labelFourCheck)
         labelFour.grid(row=4, column=0)
-        self.MoreButton = customtkinter.CTkButton(self, text="Daha Fazla", corner_radius=34, fg_color="#582233",hover_color="#3F1825", width=150, font=("Cascadia Mono Semibold", 13),hover=True, cursor="hand2",command=lambda: self.open_toplevel())
+        self.MoreButton = customtkinter.CTkButton(self, text="Daha Fazla", corner_radius=34, fg_color=ColorButton ,hover_color=ColorButtonHover, width=150, font=("Cascadia Mono Semibold", 13),hover=True, cursor="hand2",command=lambda: self.open_toplevel())
         self.MoreButton.grid(row=5, column=0)
         self.RecentWordCheck()
 
@@ -672,7 +703,9 @@ class RecentWord(customtkinter.CTkFrame):
 class StartPractice(customtkinter.CTkFrame):
     def __init__(self,master):
         super().__init__(master)
-        self.configure(fg_color="#181818")
+        self.configure(fg_color=ColorBg
+
+)
         self.columnconfigure(0,weight =1)
         self.rowconfigure(0,weight=2)
         self.rowconfigure(1,weight=5)
@@ -682,8 +715,8 @@ class StartPractice(customtkinter.CTkFrame):
         text = "Yeni öğrendiğin ingilizce kelimeleri unutmamak için düzenli olarak tekrar yapmalısın."
         customtkinter.CTkLabel(self,text=text,font=("Cascadia Mono Semibold",12),wraplength=220).grid(row=1,column=0)
         self.toplevel_window = None
-        doPracticeButton = customtkinter.CTkButton(self, text="Pratik Yap", corner_radius=34, fg_color="#582233",
-                                                  hover_color="#3F1825", width=150, font=("Cascadia Mono Semibold", 13),
+        doPracticeButton = customtkinter.CTkButton(self, text="Pratik Yap", corner_radius=34, fg_color=ColorButton ,
+                                                  hover_color=ColorButtonHover, width=150, font=("Cascadia Mono Semibold", 13),
                                                   hover=True, cursor="hand2",command=lambda : self.open_toplevel())
         doPracticeButton.grid(row=2,column=0,pady=10)
 
@@ -695,7 +728,9 @@ class StartPractice(customtkinter.CTkFrame):
 class StartAi(customtkinter.CTkFrame):
     def __init__(self,master):
         super().__init__(master)
-        self.configure(fg_color="#181818")
+        self.configure(fg_color=ColorBg
+
+)
         self.columnconfigure(0,weight =1)
         self.rowconfigure(0, weight=3)
         self.rowconfigure(1, weight=5)
@@ -707,8 +742,8 @@ class StartAi(customtkinter.CTkFrame):
         customtkinter.CTkLabel(self, text=text, font=("Cascadia Mono Semibold", 12), wraplength=220).grid(row=1,
                                                                                                           column=0)
         self.toplevel_window = None
-        doPracticeButton = customtkinter.CTkButton(self, text="Hikaye Oluştur", corner_radius=34, fg_color="#582233",
-                                                   hover_color="#3F1825", width=150,
+        doPracticeButton = customtkinter.CTkButton(self, text="Hikaye Oluştur", corner_radius=34, fg_color=ColorButton ,
+                                                   hover_color=ColorButtonHover, width=150,
                                                    font=("Cascadia Mono Semibold", 13),
                                                    hover=True, cursor="hand2",command=lambda: self.open_toplevel())
         doPracticeButton.grid(row=2, column=0, pady=10)
@@ -738,7 +773,7 @@ class App(customtkinter.CTk):
         self.geometry("900x600")
         self.wm_iconbitmap('logom.ico')
         self.title('MasterMindAi')
-        self.configure(fg_color="#212121")
+        self.configure(fg_color=ColorFrame)
         self.columnconfigure(0,weight =4)
         self.columnconfigure(1,weight =4)
         self.columnconfigure(2,weight =0)
