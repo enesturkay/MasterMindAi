@@ -9,12 +9,102 @@ from datetime import datetime
 
 
 db = mysql.connector.connect(
-    host="",
-    user="",
-    password="",
-    database=""
+
 )
 mycursor = db.cursor()
+class AISettings(customtkinter.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.configure(fg_color="#181818")
+        self.columnconfigure(0,weight=5)
+        self.columnconfigure(1,weight=5)
+        self.rowconfigure(0,weight=1)
+        self.rowconfigure(1, weight=2)
+        self.rowconfigure(2, weight=2)
+        self.rowconfigure(3, weight=2)
+        self.rowconfigure(4, weight=2)
+        self.rowconfigure(5,weight=1)
+        self.rowconfigure(6,weight=1)
+        self.rowconfigure(7,weight=1)
+        customtkinter.CTkLabel(self,text="Yapay Zeka Ayarları",font=("Cascadia Mono Semibold",16),justify="center").grid(row=0,column=0,sticky="nswe",columnspan=2)
+        customtkinter.CTkLabel(self,text="Hikaye Seviyesi",font=("Cascadia Mono Semibold",16),justify="center").grid(row=1,column=0)
+        mycursor.execute( "SELECT english_level,hobby1,hobby2,hobby3,MaksWordCount from profilesettings where id = 1")
+        self.result = mycursor.fetchall()
+        db.commit()
+        self.englishLevelChecked = customtkinter.StringVar(value=self.result[0][0])
+        self.englishLevel = customtkinter.CTkComboBox(self, values=["A1", "A2", "B1", "B2", "C1", "C2"],state="readonly",variable=self.englishLevelChecked,command=self.ChangeLevel)
+        self.englishLevelChecked.set(self.result[0][0])
+        self.englishLevel.grid(row=1,column=1)
+        customtkinter.CTkLabel(self, text="1.İlgi Alanı", font=("Cascadia Mono Semibold", 16),
+                               justify="center").grid(row=2, column=0)
+        customtkinter.CTkLabel(self, text="2.İlgi Alanı", font=("Cascadia Mono Semibold", 16),
+                               justify="center").grid(row=3, column=0)
+        customtkinter.CTkLabel(self, text="3.İlgi Alanı", font=("Cascadia Mono Semibold", 16),
+                               justify="center").grid(row=4, column=0)
+        self.HobbyOneChecked = customtkinter.StringVar(value=self.result[0][1])
+        self.HobbyTwoChecked = customtkinter.StringVar(value=self.result[0][2])
+        self.HobbyTreeChecked = customtkinter.StringVar(value=self.result[0][3])
+        self.HobbyOne = customtkinter.CTkEntry(self,textvariable=self.HobbyOneChecked)
+        self.HobbyTwo = customtkinter.CTkEntry(self,textvariable=self.HobbyTwoChecked)
+        self.HobbyTree = customtkinter.CTkEntry(self,textvariable=self.HobbyTreeChecked)
+        self.HobbyOne.grid(row=2,column=1)
+        self.HobbyTwo.grid(row=3,column=1)
+        self.HobbyTree.grid(row=4,column=1)
+        customtkinter.CTkLabel(self, text="Pratik Ayarları", font=("Cascadia Mono Semibold", 16),
+                              justify="center").grid(row=5, column=0, sticky="nswe", columnspan=2)
+        customtkinter.CTkLabel(self, text="Maksimum Kelime", font=("Cascadia Mono Semibold", 16),
+                               justify="center").grid(row=6, column=0)
+        self.PracticeCountChecked = customtkinter.IntVar(value = self.result[0][4])
+        self.PracticeCount = customtkinter.CTkEntry(self,textvariable=self.PracticeCountChecked)
+        self.PracticeCount.grid(row=6, column=1)
+        saveButton = customtkinter.CTkButton(self, text="Değiştir", corner_radius=34, fg_color="#582233", hover_color="#3F1825",width=150, font=("Cascadia Mono Semibold", 13), hover=True, cursor="hand2",command=self.Submit)
+        saveButton.grid(row=7,column=0,columnspan=2)
+
+
+
+    def Submit(self):
+        if self.HobbyOne.get() != self.result[0][1]:
+            query = "UPDATE profilesettings SET Hobby1 = %s WHERE id = 1"
+            mycursor.execute(query,(self.HobbyOne.get(),))
+        if self.HobbyTwo.get() != self.result[0][2]:
+            query = "UPDATE profilesettings SET Hobby2 = %s WHERE id = 1"
+            mycursor.execute(query,(self.HobbyTwo.get(),))
+        if self.HobbyTree.get() != self.result[0][3]:
+            query = "UPDATE profilesettings SET Hobby3 = %s WHERE id = 1"
+            mycursor.execute(query,(self.HobbyTree.get(),))
+        try:
+            number = int(self.PracticeCount.get())
+        except ValueError:
+            return
+        if self.PracticeCount.get() != self.result[0][4] and int(self.PracticeCount.get()) > 0:
+            query = "UPDATE profilesettings SET MaksWordCount = %s WHERE id = 1"
+            mycursor.execute(query, (self.PracticeCount.get(),))
+
+
+    def ChangeLevel(self,choice):
+        query = "UPDATE profilesettings SET english_level = %s WHERE id=1"
+        mycursor.execute(query,(choice,))
+        db.commit()
+
+class OpenSettings(customtkinter.CTkToplevel):
+    def __init__(self,master):
+        super().__init__(master)
+        self.title("Kullanıcı Ayarları")
+        self.geometry("400x600")
+        self.after(300, self.set_icon)
+        self.resizable(False, False)
+        self.attributes("-topmost", True)
+        self.configure(fg_color="#212121")
+        self.rowconfigure(0,weight=1)
+        self.columnconfigure(0,weight=1)
+        self.AiSettings = AISettings(self)
+        self.AiSettings.grid(row=0,column = 0,sticky="nswe",padx=14,pady=14)
+
+
+    def set_icon(self):
+        self.iconbitmap("logom.ico")
+
+
 class TLPracticeWord(customtkinter.CTkToplevel):
     def __init__(self,master):
         super().__init__(master)
@@ -34,8 +124,12 @@ class TLPracticeWord(customtkinter.CTkToplevel):
         self.grid_columnconfigure(2, weight=1)
         self.configure(fg_color="#212121")
         time = datetime.now().date()
-        sql = "SELECT English,Turkish,AdAi,Repeats FROM forapptable WHERE Checked < %s LIMIT 20"
-        mycursor.execute(sql, (time,))
+        mycursor.execute("SELECT MaksWordCount FROM profilesettings WHERE id=1")
+        resultCount = mycursor.fetchone()
+        db.commit()
+        self.Kalan = resultCount[0]
+        sql = "SELECT English,Turkish,AdAi,Repeats FROM forapptable WHERE Checked < %s LIMIT %s"
+        mycursor.execute(sql, (time,self.Kalan,))
         self.results = mycursor.fetchall()
         self.i = 0
         self.multiple = 0
@@ -78,8 +172,7 @@ class TLPracticeWord(customtkinter.CTkToplevel):
                                                   font=("Cascadia Mono Semibold", 13), hover=False, cursor="hand2",
                                                   height=34,command=self.Change)
         self.ChangeBtn.grid(row=0, column=1, padx=10)
-        self.Kalan = 19
-        self.EntryKalanCheck = customtkinter.StringVar(value=f"Kalan Kelime {self.Kalan}")
+        self.EntryKalanCheck = customtkinter.StringVar(value=f"Kalan Kelime {self.Kalan-1}")
         self.EntryKalan = customtkinter.CTkEntry(self,textvariable=self.EntryKalanCheck,state="disabled",fg_color="#212121",justify="center",font=("Cascadia Mono Semibold", 13))
         self.EntryKalan.grid(row=5,column=0,columnspan=3)
     def Change(self):
@@ -660,13 +753,18 @@ class App(customtkinter.CTk):
         self.startAi = StartAi(self)
         self.startAi.grid(row = 1,column = 1 , sticky = 'nswe',padx = 20,pady=20)
         #For Settings logo
+        self.toplevel_window = None
         profile_img_pil = Image.open("Settings.png")
         profile_img = customtkinter.CTkImage(light_image=profile_img_pil, size=(30, 30))
-        self.profile_button = customtkinter.CTkButton(self, image=profile_img, text="", fg_color="transparent",hover=False,cursor="hand2",width=50)
+        self.profile_button = customtkinter.CTkButton(self, image=profile_img, text="", fg_color="transparent",hover=False,cursor="hand2",width=50,command=lambda : self.open_toplevel())
         self.profile_button.grid(row=0,column=2,pady=30,sticky="NWE",padx=10)
         self.bind("<Configure>", lambda event: self.update_padding())
 
-
+    def open_toplevel(self):
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = OpenSettings(self)
+        else:
+            self.toplevel_window.focus()
     def RecentToCreate(self):
         self.recentWord.RecentWordCheck()
     def update_padding(self):
